@@ -768,19 +768,31 @@ class AccountJournal(models.Model):
             # Ejemplo: l10n_latam_document_number debe ser '0001-00000001' en lugar de 'OP-X 0001-00000001'
             # lo dejamos por un tiempo para que los usuarios puedan descargar los txt de aquellos pagos
             # que quedaron rotos (ejemplo: con l10n_latam_document_number = 'OP-X 0001-00000001')
-            if not move.l10n_latam_document_type_id:
-                document_number = move.l10n_latam_document_number.split(" ", 1)[-1]
-            else:
-                document_number = move.l10n_latam_document_number
-            document_parts = move._l10n_ar_get_document_number_parts(
-                document_number, move.l10n_latam_document_type_id.code)
-            # si el punto de venta es de 5 digitos no encontramos doc
-            # que diga como proceder, tomamos los ultimos 4 digitos
-            pto_venta = "{:0>4d}".format(document_parts['point_of_sale'])[-4:]
-            nro_documento = "{:0>8d}".format(document_parts['invoice_number'])[-8:]
-            content += str(pto_venta)
-            content += str(nro_documento)
+            # if not move.l10n_latam_document_type_id:
+            #     document_number = move.l10n_latam_document_number.split(" ", 1)[-1]
+            # else:
+            #     document_number = move.l10n_latam_document_number
+            # document_parts = move._l10n_ar_get_document_number_parts(
+            #     document_number, move.l10n_latam_document_type_id.code)
+            # # si el punto de venta es de 5 digitos no encontramos doc
+            # # que diga como proceder, tomamos los ultimos 4 digitos
+            # pto_venta = "{:0>4d}".format(document_parts['point_of_sale'])[-4:]
+            # nro_documento = "{:0>8d}".format(document_parts['invoice_number'])[-8:]
+            # content += str(pto_venta)
+            # content += str(nro_documento)
+            doc = move.l10n_latam_document_number or ''
 
+            # Normalizamos el número de documento (factura o pago)
+
+            if '/' in doc:
+
+                    str = doc.split('/', 1)
+
+
+
+            nro_documento = "{:0>12d}".format(str)
+            print(nro_documento)
+            content += nro_documento
             # solo para percepciones
             if not payment:
                 content += format_amount(-get_line_tax_base(line), 12, 2, ',')
