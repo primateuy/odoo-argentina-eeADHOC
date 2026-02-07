@@ -785,13 +785,9 @@ class AccountJournal(models.Model):
             # Normalizamos el número de documento (factura o pago)
 
             if '/' in doc:
+                number = int(doc.split('/', 1))
 
-                    str = doc.split('/', 1)
-
-
-
-            nro_documento = "{:0>12d}".format(str)
-            print(nro_documento)
+            nro_documento = "{:0>12d}".format(number)
             content += nro_documento
             # solo para percepciones
             if not payment:
