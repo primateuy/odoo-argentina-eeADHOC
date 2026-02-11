@@ -790,8 +790,8 @@ class AccountJournal(models.Model):
                 if '/' in doc:
                     number = int(doc.split('/', 1)[1])
 
-
-            nro_documento = "{:0>12d}".format(number)
+            content += '0001'
+            nro_documento = "{:0>8d}".format(number)
             content += nro_documento
             # solo para percepciones
             if not payment:
@@ -1188,14 +1188,16 @@ class AccountJournal(models.Model):
                 # Fecha Emision Comprobante      [10] (dd/mm/yyyy)
                 content += fields.Date.from_string(
                     line.date).strftime('%d/%m/%Y')
+
                 # Numero Comprobante            [16]
-                content += '%016d' % int(re.sub('[^0-9]', '', move.l10n_latam_document_number))
+                content += '00000001'
+                content += '%08d' % int(re.sub('[^0-9]', '', move.l10n_latam_document_number))
                 # Importe del comprobante
                 codop = '1'
                 issue_date = payment.date
                 amount_tot = abs(payment.payment_total)
                 # withholdable_base_amount es para ret de gcias, withholding_base_amount es para ret de iva
-                base_amount = line.withholding_id.withholdable_base_amount or line.withholding_id.withholdable_base_amount
+                base_amount = line.withholdable_base_amount or 0.0
 
             elif move.is_invoice():
                 # Codigo del Comprobante         [ 2]
