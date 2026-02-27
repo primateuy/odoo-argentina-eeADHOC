@@ -1247,11 +1247,11 @@ class AccountJournal(models.Model):
                 # 01 --> retención ganancias
                 if line.tax_line_id.codigo_impuesto == '01':
                     content += '0217'
-                    regimen = payment.regimen_ganancias_id
+                    regimen = payment.partner_id.default_regimen_ganancias_id
                     # necesitamos lo de filter porque hay dos regimenes que le
                     # agregamos caracteres
                     content += regimen and '%03d' % int(''.join(filter(
-                        str.isdigit, str(regimen.codigo_de_regimen)))) or '000'
+                        str.isdigit, str(regimen)))) or '000'
                 # 02 --> retención iva
                 elif line.tax_line_id.codigo_impuesto == '02':
                     content += '0767'
@@ -1298,8 +1298,7 @@ class AccountJournal(models.Model):
             content += ('%014.2f' % abs(line.balance)).replace('.', ',')
 
             # Porcentaje de Exclusion        [ 6]
-            content += '%06.2f' % line.tax_line_id.porcentaje_exclusion or '000.00'
-
+            content += ('%06.2f' % (line.tax_line_id.porcentaje_exclusion or 0.0)).replace('.', ',')
             # Fecha Emision Boletin          [10] (dd/mm/yyyy)
             content += fields.Date.from_string(
                 issue_date).strftime('%d/%m/%Y')
