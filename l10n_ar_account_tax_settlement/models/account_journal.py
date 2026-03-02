@@ -1251,7 +1251,7 @@ class AccountJournal(models.Model):
                     # necesitamos lo de filter porque hay dos regimenes que le
                     # agregamos caracteres
                     content += regimen and '%03d' % int(''.join(filter(
-                        str.isdigit, str(regimen)))) or '000'
+                        str.isdigit, str(regimen.codigo_de_regimen)))) or '000'
                 # 02 --> retención iva
                 elif line.tax_line_id.codigo_impuesto == '02':
                     content += '0767'
